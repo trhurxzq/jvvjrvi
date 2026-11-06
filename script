@@ -1,7 +1,7 @@
 local H,P,LP,G,U,C,R,GS=game:GetService("HttpService"),game:GetService("Players"),game:GetService("Players").LocalPlayer,game:GetService("CoreGui"),game:GetService("UserInputService"),workspace.CurrentCamera,game:GetService("RunService"),game:GetService("GuiService")
 _G.ThurxzConfig={EspLine=false,EspBox=false,AimbotHead=false,AimbotFovCustom=false,FovSize=100,AimbotSmoothness=2,SpeedCustom=false,JumpPowerCustom=false,GravityCustom=false,ModificarVida=false,StreamCheckBypass=false}
 _G.ThurxzBinds={} _G.JogadorSelecionadoParaTp=nil _G.TipoDeJogoAtual="Universal" _G.ChavesValidasOnline={} _G.ThurxzScriptAutorizado=false
-local L_GIT="https://githubusercontent.com"
+local L_GIT="githubusercontent.com"
 local s,res=pcall(function() return game:HttpGet(L_GIT) end)
 if s and res then for l in string.gmatch(res,"[^\r\n]+") do local cl=string.gsub(l,"%s+","") if cl~="" then table.insert(_G.ChavesValidasOnline,cl) end end else table.insert(_G.ChavesValidasOnline,"THURXZ_MASTER_99") end
 if table.find({286090429,32338938,292439477},game.PlaceId) then _G.TipoDeJogoAtual="RPG/Tiro" elseif table.find({1641021464,210669193,241538354},game.PlaceId) then _G.TipoDeJogoAtual="Sobrevivência" end
@@ -13,7 +13,7 @@ _G.SubtitleKey=Instance.new("TextLabel",LF) _G.SubtitleKey.Size=UDim2.new(1,-20,
 _G.KeyInputBox=Instance.new("TextBox",LF) _G.KeyInputBox.Size=UDim2.new(1,-20,0,35) _G.KeyInputBox.Position=UDim2.new(0,10,0,75) _G.KeyInputBox.BackgroundColor3=Color3.fromRGB(18,18,22) _G.KeyInputBox.Text="" _G.KeyInputBox.PlaceholderText="Cole sua key aqui..." _G.KeyInputBox.TextColor3=Color3.fromRGB(255,255,255) Instance.new("UICorner",_G.KeyInputBox).CornerRadius=UDim.new(0,6)
 local BtnC=Instance.new("TextButton",LF) BtnC.Size=UDim2.new(0,145,0,35) BtnC.Position=UDim2.new(0,10,0,125) BtnC.BackgroundColor3=Color3.fromRGB(160,32,240) BtnC.Text="CHECK KEY" BtnC.TextColor3=Color3.fromRGB(255,255,255) BtnC.Font=Enum.Font.SourceSansBold Instance.new("UICorner",BtnC).CornerRadius=UDim.new(0,6)
 local BtnG=Instance.new("TextButton",LF) BtnG.Size=UDim2.new(0,145,0,35) BtnG.Position=UDim2.new(1,-155,0,125) BtnG.BackgroundColor3=Color3.fromRGB(24,24,30) BtnG.Text="GET KEY" BtnG.TextColor3=Color3.fromRGB(180,180,180) BtnG.Font=Enum.Font.SourceSansBold Instance.new("UICorner",BtnG).CornerRadius=UDim.new(0,6)
-BtnG.MouseButton1Click:Connect(function() local cp=setclipboard or toclipboard or Clipboard.set if cp then cp("https://discord.gg") _G.SubtitleKey.Text="Link copiado!" _G.SubtitleKey.TextColor3=Color3.fromRGB(0,255,120) end end)
+BtnG.MouseButton1Click:Connect(function() local cp=setclipboard or toclipboard or Clipboard.set if cp then cp("discord.gg") _G.SubtitleKey.Text="Link copiado!" _G.SubtitleKey.TextColor3=Color3.fromRGB(0,255,120) end end)
 BtnC.MouseButton1Click:Connect(function() local dg=_G.KeyInputBox.Text local lib=false for _,k in pairs(_G.ChavesValidasOnline) do if dg==k then lib=true break end end if lib then _G.SubtitleKey.Text="Autorizado!" _G.SubtitleKey.TextColor3=Color3.fromRGB(0,255,120) BtnC.BackgroundColor3=Color3.fromRGB(0,200,100) task.wait(0.5) KeyGui:Destroy() _G.ThurxzScriptAutorizado=true else _G.KeyInputBox.Text="" _G.SubtitleKey.Text="Chave incorreta!" _G.SubtitleKey.TextColor3=Color3.fromRGB(255,50,50) end end)
 coroutine.wrap(function() repeat task.wait(0.5) until _G.ThurxzScriptAutorizado
 _G.ScreenGui=Instance.new("ScreenGui",G or LP:WaitForChild("PlayerGui")) _G.ScreenGui.Name="ThurxzScripts" _G.ScreenGui.ResetOnSpawn=false
@@ -22,11 +22,10 @@ local MTB=Instance.new("TextButton",_G.ScreenGui) MTB.Size=UDim2.new(0,50,0,50) 
 _G.MainFrame=Instance.new("Frame",_G.ScreenGui) _G.MainFrame.Size=UDim2.new(0,480,0,320) _G.MainFrame.Position=UDim2.new(0.5,-240,0.5,-160) _G.MainFrame.BackgroundColor3=Color3.fromRGB(10,10,12) Instance.new("UICorner",_G.MainFrame).CornerRadius=UDim.new(0,14)
 local T=Instance.new("TextLabel",_G.MainFrame) T.Size=UDim2.new(1,0,0,38) T.BackgroundColor3=Color3.fromRGB(16,16,20) T.Text="  THURXZ PURPLE HUB — MODO: "..string.upper(_G.TipoDeJogoAtual) T.TextColor3=Color3.fromRGB(255,255,255) T.Font=Enum.Font.SourceSansBold T.TextSize=14 T.TextXAlignment=Enum.TextXAlignment.Left Instance.new("UICorner",T).CornerRadius=UDim.new(0,14)
 local TL=Instance.new("Frame",T) TL.Size=UDim2.new(1,0,0,2) TL.Position=UDim2.new(0,0,1,-2) TL.BackgroundColor3=Color3.fromRGB(160,32,240)
-_G.TabsFrame=Instance.new("Frame",_G.MainFrame) _G.TabsFrame.Position=UDim2.new(0,8,0,46) _G.TabsFrame.Size=UDim2.new(0,110,1,-54) _G.TabsFrame.BackgroundTransparency=1 Instance.new("UIListLayout",_G.TabsFrame).Padding=UDim.new(0,6)
+_G.TabsFrame=Instance.new("Frame",_G.MainFrame) _G.TabsFrame.Position=UDim2.new(0,8,0,46) _G.TabsFrame.Size=UDim2.new(0,110,1,-54) _G.TabsFrame.BackgroundTransparency=1 Instance.new("UIListLayout", _G.TabsFrame).Padding=UDim.new(0,6)
 _G.ContentFrame=Instance.new("ScrollingFrame",_G.MainFrame) _G.ContentFrame.Position=UDim2.new(0,126,0,46) _G.ContentFrame.Size=UDim2.new(1,-134,1,-54) _G.ContentFrame.BackgroundTransparency=1 _G.ContentFrame.CanvasSize=UDim2.new(0,0,2.8,0) _G.ContentFrame.ScrollBarThickness=3 Instance.new("UIListLayout",_G.ContentFrame).Padding=UDim.new(0,6)
 MTB.MouseButton1Click:Connect(function() _G.MainFrame.Visible=not _G.MainFrame.Visible end)
-_G.AbasAtivas={} _G.CurrentTab=""
-function _G.MostrarNotificacao(no)
+_G.AbasAtivas={} _G.CurrentTab=""function _G.MostrarNotificacao(no)
 local nb=Instance.new("Frame",_G.NotificationContainer) nb.Size=UDim2.new(1,0,0,38) nb.BackgroundColor3=Color3.fromRGB(12,12,14) Instance.new("UICorner",nb).CornerRadius=UDim.new(0,6)
 local br=Instance.new("Frame",nb) br.Size=UDim2.new(0,4,1,0) br.BackgroundColor3=Color3.fromRGB(160,32,240)
 local tx=Instance.new("TextLabel",nb) tx.Size=UDim2.new(1,-15,1,0) tx.Position=UDim2.new(0,12,0,0) tx.BackgroundTransparency=1 tx.Text=no.." ativa com sucesso" tx.TextColor3=Color3.fromRGB(255,255,255) tx.Font=Enum.Font.SourceSansBold tx.TextSize=13 tx.TextXAlignment=Enum.TextXAlignment.Left
@@ -39,9 +38,9 @@ b.MouseButton1Click:Connect(function() _G.CurrentTab=no for an,cc in pairs(_G.Ab
 end
 function _G.CriarToggle(ab,tx,ck)
 local tb=Instance.new("TextButton",_G.ContentFrame) tb.Size=UDim2.new(1,-10,0,35) tb.BackgroundColor3=Color3.fromRGB(18,18,22) tb.Text="  "..tx tb.TextColor3=Color3.fromRGB(255,255,255) tb.Font=Enum.Font.SourceSans tb.TextSize=14 tb.TextXAlignment=Enum.TextXAlignment.Left tb.Visible=(ab== _G.CurrentTab) Instance.new("UICorner",tb).CornerRadius=UDim.new(0,6)
-local ind=Instance.new("Frame",tb) ind.Size=UDim2.new(0,35,0,18) ind.Position=UDim2.new(1,-95,0.5,-9) ind.BackgroundColor3=_G.ThurxzConfig[ck] and Color3.fromRGB(160,32,240) or Color3.fromRGB(45,45,50) Instance.new("UICorner",ind).CornerRadius=UDim.new(0,9)
+local Indicador=Instance.new("Frame",tb) Indicador.Size=UDim2.new(0,35,0,18) Indicador.Position=UDim2.new(1,-95,0.5,-9) Indicador.BackgroundColor3=_G.ThurxzConfig[ck] and Color3.fromRGB(160,32,240) or Color3.fromRGB(45,45,50) Instance.new("UICorner",Indicador).CornerRadius=UDim.new(0,9)
 local bb=Instance.new("TextButton",tb) bb.Size=UDim2.new(0,40,0,20) bb.Position=UDim2.new(1,-50,0.5,-10) bb.BackgroundColor3=Color3.fromRGB(28,28,35) bb.Text="None" bb.TextColor3=Color3.fromRGB(160,32,240) bb.Font=Enum.Font.SourceSansBold bb.TextSize=11 Instance.new("UICorner",bb).CornerRadius=UDim.new(0,4)
-local function up() ind.BackgroundColor3=_G.ThurxzConfig[ck] and Color3.fromRGB(160,32,240) or Color3.fromRGB(45,45,50) if _G.ThurxzConfig[ck] then _G.MostrarNotificacao(tx) end end
+local function up() Indicador.BackgroundColor3=_G.ThurxzConfig[ck] and Color3.fromRGB(160,32,240) or Color3.fromRGB(45,45,50) if _G.ThurxzConfig[ck] then _G.MostrarNotificacao(tx) end end
 tb.MouseButton1Click:Connect(function() _G.ThurxzConfig[ck]=not _G.ThurxzConfig[ck] up() end)
 local lis=false bb.MouseButton1Click:Connect(function() if lis then return end lis=true bb.Text="..." local cb cb=U.InputBegan:Connect(function(input,p) if p then return end if input.UserInputType==Enum.UserInputType.Keyboard then _G.ThurxzBinds[ck]=input.KeyCode.Name bb.Text=input.KeyCode.Name lis=false cb:Disconnect() end end) end)
 U.InputBegan:Connect(function(input,p) if p then return end if _G.ThurxzBinds[ck] and input.KeyCode.Name==_G.ThurxzBinds[ck] then _G.ThurxzConfig[ck]=not _G.ThurxzConfig[ck] up() end end)
