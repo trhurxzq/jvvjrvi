@@ -1,5 +1,5 @@
 -- =======================================================
--- THURXZ PURPLE HUB — PARTE 1 DE 6 (CONFIGS & KEY SYSTEM)
+-- THURXZ PURPLE HUB — PARTE 1 DE 2 (INTERFACE & LOGIN)
 -- =======================================================
 
 local HttpService = game:GetService("HttpService")
@@ -17,17 +17,14 @@ _G.ThurxzConfig = {
     AntiAfk = true, StreamCheckBypass = false
 }
 
--- Dicionário que guarda as teclas de atalho de cada Toggle (Padrão: Sem atalho / "None")
 _G.ThurxzBinds = {}
-
 _G.JogadorSelecionadoParaTp = nil
 _G.TipoDeJogoAtual = "Universal"
 _G.ChavesValidasOnline = {}
 _G.ThurxzScriptAutorizado = false
 
--- Link do seu repositório sincronizado
+-- Seu link real do GitHub integrado
 local LINK_GITHUB_RAW = "https://githubusercontent.com" 
-local LINK_DISCORD = "https://discord.gg"
 
 local sucesso, resultado = pcall(function() return game:HttpGet(LINK_GITHUB_RAW) end)
 if sucesso and resultado then
@@ -35,10 +32,8 @@ if sucesso and resultado then
         local chaveLimpa = string.gsub(linha, "%s+", "")
         if chaveLimpa ~= "" then table.insert(_G.ChavesValidasOnline, chaveLimpa) end
     end
-    print("--> [THURXZ]: " .. #_G.ChavesValidasOnline .. " chaves sincronizadas com sucesso!")
 else
     table.insert(_G.ChavesValidasOnline, "THURXZ_MASTER_99")
-    warn("--> [THURXZ]: Erro ao conectar ao GitHub, usando chave reserva.")
 end
 
 if table.find({286090429, 32338938, 292439477}, game.PlaceId) then _G.TipoDeJogoAtual = "RPG/Tiro"
@@ -108,12 +103,8 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- =======================================================
--- THURXZ PURPLE HUB — PARTE 2 DE 6 (VALIDACAO DE KEY)
--- =======================================================
-
 local CheckButton = Instance.new("TextButton")
-CheckButton.Parent = game:GetService("CoreGui"):FindFirstChild("ThurxzKeySystem") and game:GetService("CoreGui").ThurxzKeySystem.LoginFrame or game:GetService("Players").LocalPlayer.PlayerGui.ThurxzKeySystem.LoginFrame
+CheckButton.Parent = LoginFrame
 CheckButton.Size = UDim2.new(0, 145, 0, 35)
 CheckButton.Position = UDim2.new(0, 10, 0, 125)
 CheckButton.BackgroundColor3 = Color3.fromRGB(160, 32, 240)
@@ -123,7 +114,7 @@ CheckButton.Font = Enum.Font.SourceSansBold
 Instance.new("UICorner", CheckButton).CornerRadius = UDim.new(0, 6)
 
 local GetButton = Instance.new("TextButton")
-GetButton.Parent = CheckButton.Parent
+GetButton.Parent = LoginFrame
 GetButton.Size = UDim2.new(0, 145, 0, 35)
 GetButton.Position = UDim2.new(1, -155, 0, 125)
 GetButton.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
@@ -134,11 +125,7 @@ Instance.new("UICorner", GetButton).CornerRadius = UDim.new(0, 6)
 
 GetButton.MouseButton1Click:Connect(function()
     local copiar = setclipboard or toclipboard or Clipboard.set
-    if copiar then 
-        copiar("https://discord.gg") 
-        _G.SubtitleKey.Text = "Link copiado!" 
-        _G.SubtitleKey.TextColor3 = Color3.fromRGB(0, 255, 120) 
-    end
+    if copiar then copiar("https://discord.gg") _G.SubtitleKey.Text = "Link copiado!" _G.SubtitleKey.TextColor3 = Color3.fromRGB(0, 255, 120) end
 end)
 
 CheckButton.MouseButton1Click:Connect(function()
@@ -147,28 +134,20 @@ CheckButton.MouseButton1Click:Connect(function()
     if liberado then
         _G.SubtitleKey.Text = "Acesso VIP Autorizado!" _G.SubtitleKey.TextColor3 = Color3.fromRGB(0, 255, 120)
         CheckButton.BackgroundColor3 = Color3.fromRGB(0, 200, 100) task.wait(0.8)
-        CheckButton.Parent.Parent:Destroy() _G.ThurxzScriptAutorizado = true
+        KeyGui:Destroy() _G.ThurxzScriptAutorizado = true
     else
-        _G.KeyInputBox.Text = "" _G.SubtitleKey.Text = "Chave incorreta ou expirada!" _G.SubtitleKey.TextColor3 = Color3.fromRGB(255, 50, 50)
+        _G.KeyInputBox.Text = "" _G.SubtitleKey.Text = "Chave incorreta!" _G.SubtitleKey.TextColor3 = Color3.fromRGB(255, 50, 50)
     end
 end)
 
--- =======================================================
--- THURXZ PURPLE HUB — PARTE 3 DE 6 (ESTRUTURA CHEAT)
--- =======================================================
-
-if not _G.ThurxzScriptAutorizado then return warn("[ERRO]: Insira a chave primeiro!") end
-
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local UserInputService = game:GetService("UserInputService")
-local CoreGui = game:GetService("CoreGui")
+-- Pausa para dar tempo da Parte 2 carregar e ler a autorização
+repeat task.wait(0.5) until _G.ThurxzScriptAutorizado
 
 _G.ScreenGui = Instance.new("ScreenGui")
 _G.ScreenGui.Name = "ThurxzScripts_Premium"
 _G.ScreenGui.ResetOnSpawn = false
-local ok, err = pcall(function() _G.ScreenGui.Parent = CoreGui end)
-if not ok then _G.ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
+pcall(function() _G.ScreenGui.Parent = CoreGui end)
+if not _G.ScreenGui.Parent then _G.ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
 
 _G.NotificationContainer = Instance.new("Frame")
 _G.NotificationContainer.Parent = _G.ScreenGui
@@ -179,16 +158,16 @@ local NotifLayout = Instance.new("UIListLayout", _G.NotificationContainer)
 NotifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
 NotifLayout.Padding = UDim.new(0, 6)
 
-local ToggleButton = Instance.new("TextButton")
-ToggleButton.Parent = _G.ScreenGui
-ToggleButton.Size = UDim2.new(0, 50, 0, 50)
-ToggleButton.Position = UDim2.new(0, 10, 0, 50)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(20, 0, 35)
-ToggleButton.Text = "TX"
-ToggleButton.TextColor3 = Color3.fromRGB(160, 32, 240)
-ToggleButton.Font = Enum.Font.SourceSansBold
-ToggleButton.TextSize = 22
-Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 25)
+local MenuToggleButton = Instance.new("TextButton")
+MenuToggleButton.Parent = _G.ScreenGui
+MenuToggleButton.Size = UDim2.new(0, 50, 0, 50)
+MenuToggleButton.Position = UDim2.new(0, 10, 0, 50)
+MenuToggleButton.BackgroundColor3 = Color3.fromRGB(20, 0, 35)
+MenuToggleButton.Text = "TX"
+MenuToggleButton.TextColor3 = Color3.fromRGB(160, 32, 240)
+MenuToggleButton.Font = Enum.Font.SourceSansBold
+MenuToggleButton.TextSize = 22
+Instance.new("UICorner", MenuToggleButton).CornerRadius = UDim.new(0, 25)
 
 _G.MainFrame = Instance.new("Frame")
 _G.MainFrame.Parent = _G.ScreenGui
@@ -238,18 +217,18 @@ end
 Title.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true dragStart = input.Position startPos = _G.MainFrame.Position
-        input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
-    end
+
+input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+end
 end)
 Title.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end end)
 UserInputService.InputChanged:Connect(function(input) if input == dragInput and dragging then update(input) end end)
-ToggleButton.MouseButton1Click:Connect(function() _G.MainFrame.Visible = not _G.MainFrame.Visible end)
+MenuToggleButton.MouseButton1Click:Connect(function() _G.MainFrame.Visible = not _G.MainFrame.Visible end)
 
 -- =======================================================
--- THURXZ PURPLE HUB — PARTE 4 DE 6 (NOTIFICACOES & BIND LOGIC)
+-- THURXZ PURPLE HUB — PARTE 2 DE 2 (MOTORES & CORE LOOP)
 -- =======================================================
 
-local UserInputService = game:GetService("UserInputService")
 _G.AbasAtivas = {} _G.CurrentTab = ""
 
 function _G.MostrarNotificacao(nomeOpcao)
@@ -356,7 +335,7 @@ function _G.CriarToggle(aba, texto, configChave)
         escutandoTeclado = true BindButton.Text = "..." BindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         
         local conexaoBind
-        conexaoBind = UserInputService.InputBegan:Connect(function(input, processado)
+        conexaoBind = game:GetService("UserInputService").InputBegan:Connect(function(input, processado)
             if processado then return end
             if input.UserInputType == Enum.UserInputType.Keyboard then
                 _G.ThurxzBinds[configChave] = input.KeyCode.Name
@@ -367,7 +346,7 @@ function _G.CriarToggle(aba, texto, configChave)
         end)
     end)
 
-    UserInputService.InputBegan:Connect(function(input, processado)
+    game:GetService("UserInputService").InputBegan:Connect(function(input, processado)
         if processado then return end
         if _G.ThurxzBinds[configChave] and input.KeyCode.Name == _G.ThurxzBinds[configChave] then
             _G.ThurxzConfig[configChave] = not _G.ThurxzConfig[configChave]
@@ -392,12 +371,8 @@ function _G.CriarBotaoAcao(aba, texto, acao)
 end
 
 -- =======================================================
--- THURXZ PURPLE HUB — PARTE 5 DE 6 (POPULACAO & TP)
+-- CATEGORIZAÇÃO DOS BOTÕES POR AUTO GAME
 -- =======================================================
-
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
 if _G.TipoDeJogoAtual == "RPG/Tiro" then
     _G.CriarAba("RPG Combat")
     _G.CriarToggle("RPG Combat", "Aimbot Head", "AimbotHead")
@@ -424,6 +399,7 @@ else
     _G.CriarToggle("Player", "Velocidade", "SpeedCustom")
 end
 
+-- ABA DE TELEPORTE POR LISTA
 _G.CriarAba("Teleport")
 local TpFrame = Instance.new("Frame")
 TpFrame.Size = UDim2.new(1, -10, 0, 160)
@@ -454,8 +430,8 @@ Instance.new("UICorner", PlayerScroll).CornerRadius = UDim.new(0, 6)
 
 ListButton.MouseButton1Click:Connect(function()
     for _, child in pairs(PlayerScroll:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer then
+    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+        if player ~= game:GetService("Players").LocalPlayer then
             local pBtn = Instance.new("TextButton")
             pBtn.Size = UDim2.new(1, 0, 0, 24)
             pBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
@@ -479,103 +455,87 @@ TpPlayerAction.Parent = TpFrame
 Instance.new("UICorner", TpPlayerAction).CornerRadius = UDim.new(0, 6)
 
 TpPlayerAction.MouseButton1Click:Connect(function()
-    if _G.JogadorSelecionadoParaTp and _G.JogadorSelecionadoParaTp.Character then
-        local targetRoot = _G.JogadorSelecionadoParaTp.Character:FindFirstChild("HumanoidRootPart")
-        local myRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if targetRoot and myRoot then myRoot.CFrame = targetRoot.CFrame * CFrame.new(0, 2, 0) end
-    end
+
+if _G.JogadorSelecionadoParaTp and _G.JogadorSelecionadoParaTp.Character then
+local targetRoot = _G.JogadorSelecionadoParaTp.Character:FindFirstChild("HumanoidRootPart")
+local myRoot = game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+if targetRoot and myRoot then myRoot.CFrame = targetRoot.CFrame * CFrame.new(0, 2, 0) end
+end
 end)
-
 -- =======================================================
--- THURXZ PURPLE HUB — PARTE 6 DE 6 (MOTORES & CORE LOOP)
+-- MOTORES VETORIAIS (AIMBOT, ESP & RENDERS)
 -- =======================================================
-
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local HttpService = game:GetService("HttpService")
-local GuiService = game:GetService("GuiService")
-
-_G.CriarAba("Configs")
-_G.CriarToggle("Configs", "StreamCheck Bypass", "StreamCheckBypass")
-
 local function obterInimigoMaisProximo()
-    local menorDistancia = math.huge local alvoEscolhido = nil
-    local centroDaTela = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-    if not (UserInputService.TouchEnabled and not UserInputService.MouseEnabled) then centroDaTela = UserInputService:GetMouseLocation() end
-    for _, j in pairs(Players:GetPlayers()) do
-        if j ~= LocalPlayer and j.Character and j.Character:FindFirstChild("HumanoidRootPart") then
-            local head = j.Character:FindFirstChild("Head") local hum = j.Character:FindFirstChildOfClass("Humanoid")
-            if head and hum and hum.Health > 0 then
-                local posTela, visivel = Camera:WorldToViewportPoint(head.Position)
-                if visivel then
-                    local dist = (Vector2.new(posTela.X, posTela.Y) - centroDaTela).Magnitude
-                    if _G.ThurxzConfig.AimbotFovCustom and dist <= _G.ThurxzConfig.FovSize and dist < menorDistancia then menorDistancia = dist alvoEscolhido = head
-                    elseif not _G.ThurxzConfig.AimbotFovCustom and dist < menorDistancia then menorDistancia = dist alvoEscolhido = head end
-                end
-            end
-        end
-    end
-    return alvoEscolhido
+local menorDistancia = math.huge local alvoEscolhido = nil
+local centroDaTela = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+if not (game:GetService("UserInputService").TouchEnabled and not game:GetService("UserInputService").MouseEnabled) then centroDaTela = game:GetService("UserInputService"):GetMouseLocation() end
+for _, j in pairs(game:GetService("Players"):GetPlayers()) do
+if j ~= game:GetService("Players").LocalPlayer and j.Character and j.Character:FindFirstChild("HumanoidRootPart") then
+local head = j.Character:FindFirstChild("Head") local hum = j.Character:FindFirstChildOfClass("Humanoid")
+if head and hum and hum.Health > 0 then
+local posTela, visivel = Camera:WorldToViewportPoint(head.Position)
+if visivel then
+local dist = (Vector2.new(posTela.X, posTela.Y) - centroDaTela).Magnitude
+if _G.ThurxzConfig.AimbotFovCustom and dist <= _G.ThurxzConfig.FovSize and dist < menorDistancia then menorDistancia = dist alvoEscolhido = head
+elseif not _G.ThurxzConfig.AimbotFovCustom and dist < menorDistancia then menorDistancia = dist alvoEscolhido = head end
 end
-
+end
+end
+end
+return alvoEscolhido
+end
 _G.FovCircle = Drawing.new("Circle") _G.FovCircle.Color = Color3.fromRGB(160, 32, 240) _G.FovCircle.Thickness = 1.5 _G.FovCircle.Filled = false _G.FovCircle.Transparency = 1 _G.FovCircle.Visible = false
-
 local function criarEsp(jogador)
-    local LinhaEsp = Drawing.new("Line") LinhaEsp.Color = Color3.fromRGB(160, 32, 240) LinhaEsp.Thickness = 1.5
-    local CaixaEsp = Drawing.new("Square") CaixaEsp.Color = Color3.fromRGB(180, 50, 255) CaixaEsp.Thickness = 1.5 local conexao
-    conexao = RunService.RenderStepped:Connect(function()
-        if not jogador.Parent or not jogador.Character or not jogador.Character:FindFirstChild("HumanoidRootPart") then
-            LinhaEsp.Visible = false CaixaEsp.Visible = false if not jogador.Parent then LinhaEsp:Remove() CaixaEsp:Remove() conexao:Disconnect() end return
-        end
-        local rootPart = jogador.Character.HumanoidRootPart local hum = jogador.Character:FindFirstChildOfClass("Humanoid")
-        if hum and hum.Health > 0 then
-            local posRaiz, visivel = Camera:WorldToViewportPoint(rootPart.Position)
-            if visivel then
-                if _G.ThurxzConfig.EspBox then
-                    local alt = (Camera:WorldToViewportPoint(rootPart.Position + Vector3.new(0, 3, 0)).Y - Camera:WorldToViewportPoint(rootPart.Position - Vector3.new(0, 3, 0)).Y) local larg = alt / 2
-                    CaixaEsp.Size = Vector2.new(larg, alt) CaixaEsp.Position = Vector2.new(posRaiz.X - larg / 2, posRaiz.Y - alt / 2) CaixaEsp.Visible = true
-                else CaixaEsp.Visible = false end
-                if _G.ThurxzConfig.EspLine then LinhaEsp.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y) LinhaEsp.To = Vector2.new(posRaiz.X, posRaiz.Y) LinhaEsp.Visible = true else LinhaEsp.Visible = false end
-            else LinhaEsp.Visible = false CaixaEsp.Visible = false end
-        else LinhaEsp.Visible = false CaixaEsp.Visible = false end
-    end)
+local LinhaEsp = Drawing.new("Line") LinhaEsp.Color = Color3.fromRGB(160, 32, 240) LinhaEsp.Thickness = 1.5
+local CaixaEsp = Drawing.new("Square") CaixaEsp.Color = Color3.fromRGB(180, 50, 255) CaixaEsp.Thickness = 1.5 local conexao
+conexao = RunService.RenderStepped:Connect(function()
+if not jogador.Parent or not jogador.Character or not jogador.Character:FindFirstChild("HumanoidRootPart") then
+LinhaEsp.Visible = false CaixaEsp.Visible = false if not jogador.Parent then LinhaEsp:Remove() CaixaEsp:Remove() conexao:Disconnect() end return
 end
-for _, j in pairs(Players:GetPlayers()) do if j ~= LocalPlayer then criarEsp(j) end end
-Players.PlayerAdded:Connect(function(j) if j ~= LocalPlayer then criarEsp(j) end end)
-
-GuiService.CaptureNotified:Connect(function(capturando)
-    if _G.ThurxzConfig.StreamCheckBypass and capturando then
-        if _G.FovCircle then _G.FovCircle.Visible = false end
-        local antigoBox = _G.ThurxzConfig.EspBox local antigoLine = _G.ThurxzConfig.EspLine
-        _G.ThurxzConfig.EspBox = false _G.ThurxzConfig.EspLine = false task.wait(0.6)
-        _G.ThurxzConfig.EspBox = antigoBox _G.ThurxzConfig.EspLine = antigoLine
-    end
+local rootPart = jogador.Character.HumanoidRootPart local hum = jogador.Character:FindFirstChildOfClass("Humanoid")
+if hum and hum.Health > 0 then
+local posRaiz, visivel = Camera:WorldToViewportPoint(rootPart.Position)
+if visivel then
+if _G.ThurxzConfig.EspBox then
+local alt = (Camera:WorldToViewportPoint(rootPart.Position + Vector3.new(0, 3, 0)).Y - Camera:WorldToViewportPoint(rootPart.Position - Vector3.new(0, 3, 0)).Y) local larg = alt / 2
+CaixaEsp.Size = Vector2.new(larg, alt) CaixaEsp.Position = Vector2.new(posRaiz.X - larg / 2, posRaiz.Y - alt / 2) CaixaEsp.Visible = true
+else CaixaEsp.Visible = false end
+if _G.ThurxzConfig.EspLine then LinhaEsp.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y) LinhaEsp.To = Vector2.new(posRaiz.X, posRaiz.Y) LinhaEsp.Visible = true else LinhaEsp.Visible = false end
+else LinhaEsp.Visible = false CaixaEsp.Visible = false end
+else LinhaEsp.Visible = false CaixaEsp.Visible = false end
 end)
-
-local NOME_ARQUIVO = "ThurxzConfig_Premium.json"
-_G.CriarBotaoAcao("Configs", "💾 CONF SAVE", function() pcall(function() writefile(NOME_ARQUIVO, HttpService:JSONEncode(_G.ThurxzConfig)) end) end)
+end
+for _, j in pairs(game:GetService("Players"):GetPlayers()) do if j ~= game:GetService("Players").LocalPlayer then criarEsp(j) end end
+game:GetService("Players").PlayerAdded:Connect(function(j) if j ~= game:GetService("Players").LocalPlayer then criarEsp(j) end end)
+game:GetService("GuiService").CaptureNotified:Connect(function(capturando)
+if _G.ThurxzConfig.StreamCheckBypass and capturando then
+if _G.FovCircle then _G.FovCircle.Visible = false end
+local antigoBox = _G.ThurxzConfig.EspBox local antigoLine = _G.ThurxzConfig.EspLine
+_G.ThurxzConfig.EspBox = false _G.ThurxzConfig.EspLine = false task.wait(0.6)
+_G.ThurxzConfig.EspBox = antigoBox _G.ThurxzConfig.EspLine = antigoLine
+end
+end)
+_G.CriarAba("Configs")
+_G.CriarBotaoAcao("Configs", "💾 CONF SAVE", function() pcall(function() writefile("ThurxzConfig_Premium.json", HttpService:JSONEncode(_G.ThurxzConfig)) end) end)
 _G.CriarBotaoAcao("Configs", "🔄 CONF LOAD", function()
-    if isfile(NOME_ARQUIVO) then local ok, res = pcall(function() return HttpService:JSONDecode(readfile(NOME_ARQUIVO)) end) if ok then for k, v in pairs(res) do _G.ThurxzConfig[k] = v end end end
+if isfile("ThurxzConfig_Premium.json") then local ok, res = pcall(function() return HttpService:JSONDecode(readfile("ThurxzConfig_Premium.json")) end) if ok then for k, v in pairs(res) do _G.ThurxzConfig[k] = v end end end
 end)
-
 RunService.RenderStepped:Connect(function()
-    local character = LocalPlayer.Character local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-    if _G.ThurxzConfig.AimbotFovCustom and _G.FovCircle then
-        if UserInputService.TouchEnabled and not UserInputService.MouseEnabled then _G.FovCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-        else _G.FovCircle.Position = UserInputService:GetMouseLocation() end
-        _G.FovCircle.Radius = _G.ThurxzConfig.FovSize _G.FovCircle.Visible = true
-    elseif _G.FovCircle then _G.FovCircle.Visible = false end
-    if _G.ThurxzConfig.AimbotHead then local alvo = obterInimigoMaisProximo() if alvo then Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, alvo.Position), 1 / _G.ThurxzConfig.AimbotSmoothness) end end
-    if humanoid then
-        if _G.ThurxzConfig.SpeedCustom then humanoid.WalkSpeed = 150 else humanoid.WalkSpeed = 16 end
-        if _G.ThurxzConfig.JumpPowerCustom then humanoid.JumpPower = 120 else humanoid.JumpPower = 50 end
-        if _G.ThurxzConfig.ModificarVida then humanoid.MaxHealth = 2000 humanoid.Health = 2000 end
-    end
-    workspace.Gravity = _G.ThurxzConfig.GravityCustom and 40 or 196.2
+local character = game:GetService("Players").LocalPlayer.Character local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+if _G.ThurxzConfig.AimbotFovCustom and _G.FovCircle then
+if game:GetService("UserInputService").TouchEnabled and not game:GetService("UserInputService").MouseEnabled then _G.FovCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+else _G.FovCircle.Position = game:GetService("UserInputService"):GetMouseLocation() end
+_G.FovCircle.Radius = _G.ThurxzConfig.FovSize _G.FovCircle.Visible = true
+elseif _G.FovCircle then _G.FovCircle.Visible = false end
+if _G.ThurxzConfig.AimbotHead then local alvo = obterInimigoMaisProximo() if alvo then Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, alvo.Position), 1 / _G.ThurxzConfig.AimbotSmoothness) end end
+if humanoid then
+if _G.ThurxzConfig.SpeedCustom then humanoid.WalkSpeed = 150 else humanoid.WalkSpeed = 16 end
+if _G.ThurxzConfig.JumpPowerCustom then humanoid.JumpPower = 120 else humanoid.JumpPower = 50 end
+if _G.ThurxzConfig.ModificarVida then humanoid.MaxHealth = 2000 humanoid.Health = 2000 end
+end
+workspace.Gravity = _G.ThurxzConfig.GravityCustom and 40 or 196.2
 end)
-print("--> [THURXZ PURPLE PREMIUM HUB V2]: Totalmente injetado e online!")
-
+print("--> [THURXZ PURPLE PREMIUM HUB V3]: Modulos finais ativos e injetados com sucesso!")
 
