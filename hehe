@@ -1,5 +1,6 @@
+
 -- =======================================================
--- THURXZ PURPLE HUB — PARTE 1 DE 2 (INTERFACE & LOGIN)
+-- THURXZ PURPLE HUB V3 — SCRIPT PREMIUM COMPLETO UNIFICADO
 -- =======================================================
 
 local HttpService = game:GetService("HttpService")
@@ -7,6 +8,9 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
+local Camera = workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+local GuiService = game:GetService("GuiService")
 
 _G.ThurxzConfig = {
     EspLine = false, EspBox = false, EspName = false, EspHealth = false, EspCharms = false, EspInventory = false,
@@ -23,8 +27,9 @@ _G.TipoDeJogoAtual = "Universal"
 _G.ChavesValidasOnline = {}
 _G.ThurxzScriptAutorizado = false
 
--- Seu link real do GitHub integrado
+-- Link real do seu GitHub para sincronização online das suas chaves (0001 até 0012)
 local LINK_GITHUB_RAW = "https://githubusercontent.com" 
+local LINK_DISCORD = "https://discord.gg"
 
 local sucesso, resultado = pcall(function() return game:HttpGet(LINK_GITHUB_RAW) end)
 if sucesso and resultado then
@@ -32,6 +37,7 @@ if sucesso and resultado then
         local chaveLimpa = string.gsub(linha, "%s+", "")
         if chaveLimpa ~= "" then table.insert(_G.ChavesValidasOnline, chaveLimpa) end
     end
+    print("--> [THURXZ]: Chaves online sincronizadas com sucesso do GitHub!")
 else
     table.insert(_G.ChavesValidasOnline, "THURXZ_MASTER_99")
 end
@@ -125,7 +131,7 @@ Instance.new("UICorner", GetButton).CornerRadius = UDim.new(0, 6)
 
 GetButton.MouseButton1Click:Connect(function()
     local copiar = setclipboard or toclipboard or Clipboard.set
-    if copiar then copiar("https://discord.gg") _G.SubtitleKey.Text = "Link copiado!" _G.SubtitleKey.TextColor3 = Color3.fromRGB(0, 255, 120) end
+    if copiar then copiar(LINK_DISCORD) _G.SubtitleKey.Text = "Link copiado!" _G.SubtitleKey.TextColor3 = Color3.fromRGB(0, 255, 120) end
 end)
 
 CheckButton.MouseButton1Click:Connect(function()
@@ -140,266 +146,234 @@ CheckButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Pausa para dar tempo da Parte 2 carregar e ler a autorização
-repeat task.wait(0.5) until _G.ThurxzScriptAutorizado
+coroutine.wrap(function()
+    repeat task.wait(0.5) until _G.ThurxzScriptAutorizado
 
-_G.ScreenGui = Instance.new("ScreenGui")
-_G.ScreenGui.Name = "ThurxzScripts_Premium"
-_G.ScreenGui.ResetOnSpawn = false
-pcall(function() _G.ScreenGui.Parent = CoreGui end)
-if not _G.ScreenGui.Parent then _G.ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
+    _G.ScreenGui = Instance.new("ScreenGui")
+    _G.ScreenGui.Name = "ThurxzScripts_Premium"
+    _G.ScreenGui.ResetOnSpawn = false
+    pcall(function() _G.ScreenGui.Parent = CoreGui end)
+    if not _G.ScreenGui.Parent then _G.ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
 
-_G.NotificationContainer = Instance.new("Frame")
-_G.NotificationContainer.Parent = _G.ScreenGui
-_G.NotificationContainer.Size = UDim2.new(0, 220, 0, 400)
-_G.NotificationContainer.Position = UDim2.new(1, -230, 1, -410)
-_G.NotificationContainer.BackgroundTransparency = 1
-local NotifLayout = Instance.new("UIListLayout", _G.NotificationContainer)
-NotifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
-NotifLayout.Padding = UDim.new(0, 6)
+    _G.NotificationContainer = Instance.new("Frame")
+    _G.NotificationContainer.Parent = _G.ScreenGui
+    _G.NotificationContainer.Size = UDim2.new(0, 220, 0, 400)
+    _G.NotificationContainer.Position = UDim2.new(1, -230, 1, -410)
+    _G.NotificationContainer.BackgroundTransparency = 1
+    local NotifLayout = Instance.new("UIListLayout", _G.NotificationContainer)
+    NotifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+    NotifLayout.Padding = UDim.new(0, 6)
 
-local MenuToggleButton = Instance.new("TextButton")
-MenuToggleButton.Parent = _G.ScreenGui
-MenuToggleButton.Size = UDim2.new(0, 50, 0, 50)
-MenuToggleButton.Position = UDim2.new(0, 10, 0, 50)
-MenuToggleButton.BackgroundColor3 = Color3.fromRGB(20, 0, 35)
-MenuToggleButton.Text = "TX"
-MenuToggleButton.TextColor3 = Color3.fromRGB(160, 32, 240)
-MenuToggleButton.Font = Enum.Font.SourceSansBold
-MenuToggleButton.TextSize = 22
-Instance.new("UICorner", MenuToggleButton).CornerRadius = UDim.new(0, 25)
+    local MenuToggleButton = Instance.new("TextButton")
+    MenuToggleButton.Parent = _G.ScreenGui
+    MenuToggleButton.Size = UDim2.new(0, 50, 0, 50)
+    MenuToggleButton.Position = UDim2.new(0, 10, 0, 50)
+    MenuToggleButton.BackgroundColor3 = Color3.fromRGB(20, 0, 35)
+    MenuToggleButton.Text = "TX"
+    MenuToggleButton.TextColor3 = Color3.fromRGB(160, 32, 240)
+    MenuToggleButton.Font = Enum.Font.SourceSansBold
+    MenuToggleButton.TextSize = 22
+    Instance.new("UICorner", MenuToggleButton).CornerRadius = UDim.new(0, 25)
 
-_G.MainFrame = Instance.new("Frame")
-_G.MainFrame.Parent = _G.ScreenGui
-_G.MainFrame.Size = UDim2.new(0, 480, 0, 320)
-_G.MainFrame.Position = UDim2.new(0.5, -240, 0.5, -160)
-_G.MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
-Instance.new("UICorner", _G.MainFrame).CornerRadius = UDim.new(0, 14)
+    _G.MainFrame = Instance.new("Frame")
+    _G.MainFrame.Parent = _G.ScreenGui
+    _G.MainFrame.Size = UDim2.new(0, 480, 0, 320)
+    _G.MainFrame.Position = UDim2.new(0.5, -240, 0.5, -160)
+    _G.MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
+    Instance.new("UICorner", _G.MainFrame).CornerRadius = UDim.new(0, 14)
 
-local Title = Instance.new("TextLabel")
-Title.Parent = _G.MainFrame
-Title.Size = UDim2.new(1, 0, 0, 38)
-Title.BackgroundColor3 = Color3.fromRGB(16, 16, 20)
-Title.Text = "  THURXZ PURPLE HUB — MODO: " .. string.upper(_G.TipoDeJogoAtual)
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 14
-Title.TextXAlignment = Enum.TextXAlignment.Left
-Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 14)
+    local Title = Instance.new("TextLabel")
+    Title.Parent = _G.MainFrame
+    Title.Size = UDim2.new(1, 0, 0, 38)
+    Title.BackgroundColor3 = Color3.fromRGB(16, 16, 20)
+    Title.Text = "  THURXZ PURPLE HUB — MODO: " .. string.upper(_G.TipoDeJogoAtual)
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.Font = Enum.Font.SourceSansBold
+    Title.TextSize = 14
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 14)
 
-local TitleLine = Instance.new("Frame")
-TitleLine.Parent = Title
-TitleLine.Size = UDim2.new(1, 0, 0, 2)
-TitleLine.Position = UDim2.new(0, 0, 1, -2)
-TitleLine.BackgroundColor3 = Color3.fromRGB(160, 32, 240)
+    local TitleLine = Instance.new("Frame")
+    TitleLine.Parent = Title
+    TitleLine.Size = UDim2.new(1, 0, 0, 2)
+    TitleLine.Position = UDim2.new(0, 0, 1, -2)
+    TitleLine.BackgroundColor3 = Color3.fromRGB(160, 32, 240)
 
-_G.TabsFrame = Instance.new("Frame")
-_G.TabsFrame.Parent = _G.MainFrame
-_G.TabsFrame.Position = UDim2.new(0, 8, 0, 46)
-_G.TabsFrame.Size = UDim2.new(0, 110, 1, -54)
-_G.TabsFrame.BackgroundTransparency = 1
-Instance.new("UIListLayout", _G.TabsFrame).Padding = UDim.new(0, 6)
+    _G.TabsFrame = Instance.new("Frame")
+    _G.TabsFrame.Parent = _G.MainFrame
+    _G.TabsFrame.Position = UDim2.new(0, 8, 0, 46)
+    _G.TabsFrame.Size = UDim2.new(0, 110, 1, -54)
+    _G.TabsFrame.BackgroundTransparency = 1
+    Instance.new("UIListLayout", _G.TabsFrame).Padding = UDim.new(0, 6)
 
-_G.ContentFrame = Instance.new("ScrollingFrame")
-_G.ContentFrame.Parent = _G.MainFrame
-_G.ContentFrame.Position = UDim2.new(0, 126, 0, 46)
-_G.ContentFrame.Size = UDim2.new(1, -134, 1, -54)
-_G.ContentFrame.BackgroundTransparency = 1
-_G.ContentFrame.CanvasSize = UDim2.new(0, 0, 2.8, 0)
-_G.ContentFrame.ScrollBarThickness = 3
-Instance.new("UIListLayout", _G.ContentFrame).Padding = UDim.new(0, 6)
+    _G.ContentFrame = Instance.new("ScrollingFrame")
+    _G.ContentFrame.Parent = _G.MainFrame
+    _G.ContentFrame.Position = UDim2.new(0, 126, 0, 46)
+    _G.ContentFrame.Size = UDim2.new(1, -134, 1, -54)
+    _G.ContentFrame.BackgroundTransparency = 1
+    _G.ContentFrame.CanvasSize = UDim2.new(0, 0, 2.8, 0)
+    _G.ContentFrame.ScrollBarThickness = 3
+    Instance.new("UIListLayout", _G.ContentFrame).Padding = UDim.new(0, 6)
 
 local dragging, dragInput, dragStart, startPos
 local function update(input)
-    local delta = input.Position - dragStart
-    _G.MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+local delta = input.Position - dragStart
+_G.MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 Title.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true dragStart = input.Position startPos = _G.MainFrame.Position
-
+if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+dragging = true dragStart = input.Position startPos = _G.MainFrame.Position
 input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
 end
 end)
 Title.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end end)
 UserInputService.InputChanged:Connect(function(input) if input == dragInput and dragging then update(input) end end)
 MenuToggleButton.MouseButton1Click:Connect(function() _G.MainFrame.Visible = not _G.MainFrame.Visible end)
-
--- =======================================================
--- THURXZ PURPLE HUB — PARTE 2 DE 2 (MOTORES & CORE LOOP)
--- =======================================================
-
 _G.AbasAtivas = {} _G.CurrentTab = ""
-
 function _G.MostrarNotificacao(nomeOpcao)
-    local NotifBox = Instance.new("Frame")
-    NotifBox.Size = UDim2.new(1, 0, 0, 38)
-    NotifBox.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
-    NotifBox.BackgroundTransparency = 0.1
-    NotifBox.Parent = _G.NotificationContainer
-    Instance.new("UICorner", NotifBox).CornerRadius = UDim.new(0, 6)
-    
-    local BordaRoxa = Instance.new("Frame")
-    BordaRoxa.Size = UDim2.new(0, 4, 1, 0)
-    BordaRoxa.BackgroundColor3 = Color3.fromRGB(160, 32, 240)
-    BordaRoxa.Parent = NotifBox
-    Instance.new("UICorner", BordaRoxa).CornerRadius = UDim.new(0, 6)
-
-    local Texto = Instance.new("TextLabel")
-    Texto.Size = UDim2.new(1, -15, 1, 0)
-    Texto.Position = UDim2.new(0, 12, 0, 0)
-    Texto.BackgroundTransparency = 1
-    Texto.Text = nomeOpcao .. " ativa com sucesso"
-    Texto.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Texto.Font = Enum.Font.SourceSansBold
-    Texto.TextSize = 13
-    Texto.TextXAlignment = Enum.TextXAlignment.Left
-    Texto.Parent = NotifBox
-
-    NotifBox.Size = UDim2.new(0, 0, 0, 38)
-    NotifBox:TweenSize(UDim2.new(1, 0, 0, 38), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.22, true)
-
-    task.delay(3, function()
-        if NotifBox then
-            NotifBox:TweenSize(UDim2.new(0, 0, 0, 38), Enum.EasingDirection.In, Enum.EasingStyle.Quart, 0.2, true, function() NotifBox:Destroy() end)
-        end
-    end)
+local NotifBox = Instance.new("Frame")
+NotifBox.Size = UDim2.new(1, 0, 0, 38)
+NotifBox.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
+NotifBox.BackgroundTransparency = 0.1
+NotifBox.Parent = _G.NotificationContainer
+Instance.new("UICorner", NotifBox).CornerRadius = UDim.new(0, 6)
+local BordaRoxa = Instance.new("Frame")
+BordaRoxa.Size = UDim2.new(0, 4, 1, 0)
+BordaRoxa.BackgroundColor3 = Color3.fromRGB(160, 32, 240)
+BordaRoxa.Parent = NotifBox
+Instance.new("UICorner", BordaRoxa).CornerRadius = UDim.new(0, 6)
+local Texto = Instance.new("TextLabel")
+Texto.Size = UDim2.new(1, -15, 1, 0)
+Texto.Position = UDim2.new(0, 12, 0, 0)
+Texto.BackgroundTransparency = 1
+Texto.Text = nomeOpcao .. " ativa com sucesso"
+Texto.TextColor3 = Color3.fromRGB(255, 255, 255)
+Texto.Font = Enum.Font.SourceSansBold
+Texto.TextSize = 13
+Texto.TextXAlignment = Enum.TextXAlignment.Left
+Texto.Parent = NotifBox
+NotifBox.Size = UDim2.new(0, 0, 0, 38)
+NotifBox:TweenSize(UDim2.new(1, 0, 0, 38), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.22, true)
+task.delay(3, function() if NotifBox then NotifBox:Destroy() end end)
 end
-
 function _G.CriarAba(nome)
-    local TabButton = Instance.new("TextButton")
-    TabButton.Size = UDim2.new(1, 0, 0, 32)
-    TabButton.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
-    TabButton.Text = nome
-    TabButton.TextColor3 = Color3.fromRGB(180, 180, 180)
-    TabButton.Font = Enum.Font.SourceSansBold
-    TabButton.TextSize = 13
-    TabButton.Parent = _G.TabsFrame
-    Instance.new("UICorner", TabButton).CornerRadius = UDim.new(0, 6)
-    
-    _G.AbasAtivas[nome] = {}
-    if _G.CurrentTab == "" then _G.CurrentTab = nome end
-    TabButton.MouseButton1Click:Connect(function()
-        _G.CurrentTab = nome
-        for abaNome, componentes in pairs(_G.AbasAtivas) do
-            local visivel = (abaNome == nome)
-            for _, comp in pairs(componentes) do comp.Visible = visivel end
-        end
-    end)
+local TabButton = Instance.new("TextButton")
+TabButton.Size = UDim2.new(1, 0, 0, 32)
+TabButton.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+TabButton.Text = nome
+TabButton.TextColor3 = Color3.fromRGB(180, 180, 180)
+TabButton.Font = Enum.Font.SourceSansBold
+TabButton.TextSize = 13
+TabButton.Parent = _G.TabsFrame
+Instance.new("UICorner", TabButton).CornerRadius = UDim.new(0, 6)
+_G.AbasAtivas[nome] = {}
+if _G.CurrentTab == "" then _G.CurrentTab = nome end
+TabButton.MouseButton1Click:Connect(function()
+_G.CurrentTab = nome
+for abaNome, componentes in pairs(_G.AbasAtivas) do
+local visivel = (abaNome == nome)
+for _, comp in pairs(componentes) do comp.Visible = visivel end
 end
-
+end)
+end
 function _G.CriarToggle(aba, texto, configChave)
-    local ToggleBg = Instance.new("TextButton")
-    ToggleBg.Size = UDim2.new(1, -10, 0, 35)
-    ToggleBg.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
-    ToggleBg.Text = "  " .. texto
-    ToggleBg.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleBg.Font = Enum.Font.SourceSans
-    ToggleBg.TextSize = 14
-    ToggleBg.TextXAlignment = Enum.TextXAlignment.Left
-    ToggleBg.Visible = (aba == _G.CurrentTab)
-    ToggleBg.Parent = _G.ContentFrame
-    Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(0, 6)
-
-    local Indicador = Instance.new("Frame")
-    Indicador.Size = UDim2.new(0, 35, 0, 18)
-    Indicador.Position = UDim2.new(1, -95, 0.5, -9)
-    Indicador.BackgroundColor3 = _G.ThurxzConfig[configChave] and Color3.fromRGB(160, 32, 240) or Color3.fromRGB(45, 45, 50)
-    Indicador.Parent = ToggleBg
-    Instance.new("UICorner", Indicador).CornerRadius = UDim.new(0, 9)
-
-    local BindButton = Instance.new("TextButton")
-    BindButton.Size = UDim2.new(0, 40, 0, 20)
-    BindButton.Position = UDim2.new(1, -50, 0.5, -10)
-    BindButton.BackgroundColor3 = Color3.fromRGB(28, 28, 35)
-    BindButton.Text = "None"
-    BindButton.TextColor3 = Color3.fromRGB(160, 32, 240)
-    BindButton.Font = Enum.Font.SourceSansBold
-    BindButton.TextSize = 11
-    BindButton.Parent = ToggleBg
-    Instance.new("UICorner", BindButton).CornerRadius = UDim.new(0, 4)
-
-    local function atualizarEstado()
-        Indicador.BackgroundColor3 = _G.ThurxzConfig[configChave] and Color3.fromRGB(160, 32, 240) or Color3.fromRGB(45, 45, 50)
-        if _G.ThurxzConfig[configChave] then _G.MostrarNotificacao(texto) end
-    end
-
-    ToggleBg.MouseButton1Click:Connect(function()
-        _G.ThurxzConfig[configChave] = not _G.ThurxzConfig[configChave]
-        atualizarEstado()
-    end)
-
-    local escutandoTeclado = false
-    BindButton.MouseButton1Click:Connect(function()
-        if escutandoTeclado then return end
-        escutandoTeclado = true BindButton.Text = "..." BindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        
-        local conexaoBind
-        conexaoBind = game:GetService("UserInputService").InputBegan:Connect(function(input, processado)
-            if processado then return end
-            if input.UserInputType == Enum.UserInputType.Keyboard then
-                _G.ThurxzBinds[configChave] = input.KeyCode.Name
-                BindButton.Text = input.KeyCode.Name
-                BindButton.TextColor3 = Color3.fromRGB(160, 32, 240)
-                escutandoTeclado = false conexaoBind:Disconnect()
-            end
-        end)
-    end)
-
-    game:GetService("UserInputService").InputBegan:Connect(function(input, processado)
-        if processado then return end
-        if _G.ThurxzBinds[configChave] and input.KeyCode.Name == _G.ThurxzBinds[configChave] then
-            _G.ThurxzConfig[configChave] = not _G.ThurxzConfig[configChave]
-            atualizarEstado()
-        end
-    end)
-    table.insert(_G.AbasAtivas[aba], ToggleBg)
+local ToggleBg = Instance.new("TextButton")
+ToggleBg.Size = UDim2.new(1, -10, 0, 35)
+ToggleBg.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+ToggleBg.Text = " " .. texto
+ToggleBg.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBg.Font = Enum.Font.SourceSans
+ToggleBg.TextSize = 14
+ToggleBg.TextXAlignment = Enum.TextXAlignment.Left
+ToggleBg.Visible = (aba == _G.CurrentTab)
+ToggleBg.Parent = _G.ContentFrame
+Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(0, 6)
+local Indicador = Instance.new("Frame")
+Indicador.Size = UDim2.new(0, 35, 0, 18)
+Indicador.Position = UDim2.new(1, -95, 0.5, -9)
+Indicador.BackgroundColor3 = _G.ThurxzConfig[configChave] and Color3.fromRGB(160, 32, 240) or Color3.fromRGB(45, 45, 50)
+Indicador.Parent = ToggleBg
+Instance.new("UICorner", Indicador).CornerRadius = UDim.new(0, 9)
+local BindButton = Instance.new("TextButton")
+BindButton.Size = UDim2.new(0, 40, 0, 20)
+BindButton.Position = UDim2.new(1, -50, 0.5, -10)
+BindButton.BackgroundColor3 = Color3.fromRGB(28, 28, 35)
+BindButton.Text = "None"
+BindButton.TextColor3 = Color3.fromRGB(160, 32, 240)
+BindButton.Font = Enum.Font.SourceSansBold
+BindButton.TextSize = 11
+BindButton.Parent = ToggleBg
+Instance.new("UICorner", BindButton).CornerRadius = UDim.new(0, 4)
+local function atualizarEstado()
+Indicador.BackgroundColor3 = _G.ThurxzConfig[configChave] and Color3.fromRGB(160, 32, 240) or Color3.fromRGB(45, 45, 50)
+if _G.ThurxzConfig[configChave] then _G.MostrarNotificacao(texto) end
 end
-
+ToggleBg.MouseButton1Click:Connect(function()
+_G.ThurxzConfig[configChave] = not _G.ThurxzConfig[configChave]
+atualizarEstado()
+end)
+local escutandoTeclado = false
+BindButton.MouseButton1Click:Connect(function()
+if escutandoTeclado then return end
+escutandoTeclado = true BindButton.Text = "..." BindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+local conexaoBind
+conexaoBind = UserInputService.InputBegan:Connect(function(input, processado)
+if processado then return end
+if input.UserInputType == Enum.UserInputType.Keyboard then
+_G.ThurxzBinds[configChave] = input.KeyCode.Name
+BindButton.Text = input.KeyCode.Name
+BindButton.TextColor3 = Color3.fromRGB(160, 32, 240)
+escutandoTeclado = false conexaoBind:Disconnect()
+end
+end)
+end)
+UserInputService.InputBegan:Connect(function(input, processado)
+if processado then return end
+if _G.ThurxzBinds[configChave] and input.KeyCode.Name == _G.ThurxzBinds[configChave] then
+_G.ThurxzConfig[configChave] = not _G.ThurxzConfig[configChave]
+atualizarEstado()
+end
+end)
+table.insert(_G.AbasAtivas[aba], ToggleBg)
+end
 function _G.CriarBotaoAcao(aba, texto, acao)
-    local Botao = Instance.new("TextButton")
-    Botao.Size = UDim2.new(1, -10, 0, 35)
-    Botao.BackgroundColor3 = Color3.fromRGB(120, 20, 180)
-    Botao.Text = texto
-    Botao.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Botao.Font = Enum.Font.SourceSansBold
-    Botao.Visible = (aba == _G.CurrentTab)
-    Botao.Parent = _G.ContentFrame
-    Instance.new("UICorner", Botao).CornerRadius = UDim.new(0, 6)
-    Botao.MouseButton1Click:Connect(acao)
-    table.insert(_G.AbasAtivas[aba], Botao)
+local Botao = Instance.new("TextButton")
+Botao.Size = UDim2.new(1, -10, 0, 35)
+Botao.BackgroundColor3 = Color3.fromRGB(120, 20, 180)
+Botao.Text = texto
+Botao.TextColor3 = Color3.fromRGB(255, 255, 255)
+Botao.Font = Enum.Font.SourceSansBold
+Botao.Visible = (aba == _G.CurrentTab)
+Botao.Parent = _G.ContentFrame
+Instance.new("UICorner", Botao).CornerRadius = UDim.new(0, 6)
+Botao.MouseButton1Click:Connect(acao)
+table.insert(_G.AbasAtivas[aba], Botao)
 end
-
--- =======================================================
--- CATEGORIZAÇÃO DOS BOTÕES POR AUTO GAME
--- =======================================================
 if _G.TipoDeJogoAtual == "RPG/Tiro" then
-    _G.CriarAba("RPG Combat")
-    _G.CriarToggle("RPG Combat", "Aimbot Head", "AimbotHead")
-    _G.CriarToggle("RPG Combat", "Aimbot FOV", "AimbotFovCustom")
-    _G.CriarToggle("RPG Combat", "ESP Line", "EspLine")
-    _G.CriarToggle("RPG Combat", "ESP Box", "EspBox")
-    _G.CriarToggle("RPG Combat", "Velocidade", "SpeedCustom")
-    _G.CriarToggle("RPG Combat", "Super Pulo", "JumpPowerCustom")
+_G.CriarAba("RPG Combat")
+_G.CriarToggle("RPG Combat", "Aimbot Head", "AimbotHead")
+_G.CriarToggle("RPG Combat", "Aimbot FOV", "AimbotFovCustom")
+_G.CriarToggle("RPG Combat", "ESP Line", "EspLine")
+_G.CriarToggle("RPG Combat", "ESP Box", "EspBox")
+_G.CriarToggle("RPG Combat", "Velocidade", "SpeedCustom")
+_G.CriarToggle("RPG Combat", "Super Pulo", "JumpPowerCustom")
 elseif _G.TipoDeJogoAtual == "Sobrevivência" then
-    _G.CriarAba("Survival")
-    _G.CriarToggle("Survival", "Super Corrida", "SpeedCustom")
-    _G.CriarToggle("Survival", "Pulo Customizado", "JumpPowerCustom")
-    _G.CriarToggle("Survival", "Gravidade Baixa", "GravityCustom")
-    _G.CriarToggle("Survival", "Modificar Vida", "ModificarVida")
-    _G.CriarToggle("Survival", "ESP Caixas", "EspBox")
+_G.CriarAba("Survival")
+_G.CriarToggle("Survival", "Super Corrida", "SpeedCustom")
+_G.CriarToggle("Survival", "Pulo Customizado", "JumpPowerCustom")
+_G.CriarToggle("Survival", "Gravidade Baixa", "GravityCustom")
+_G.CriarToggle("Survival", "Modificar Vida", "ModificarVida")
+_G.CriarToggle("Survival", "ESP Caixas", "EspBox")
 else
-    _G.CriarAba("Combat")
-    _G.CriarToggle("Combat", "Aimbot Head", "AimbotHead")
-    _G.CriarToggle("Combat", "Aimbot FOV", "AimbotFovCustom")
-    _G.CriarAba("Visuals")
-    _G.CriarToggle("Visuals", "ESP Line", "EspLine")
-    _G.CriarToggle("Visuals", "ESP Box", "EspBox")
-    _G.CriarAba("Player")
-    _G.CriarToggle("Player", "Velocidade", "SpeedCustom")
+_G.CriarAba("Combat")
+_G.CriarToggle("Combat", "Aimbot Head", "AimbotHead")
+_G.CriarToggle("Combat", "Aimbot FOV", "AimbotFovCustom")
+_G.CriarAba("Visuals")
+_G.CriarToggle("Visuals", "ESP Line", "EspLine")
+_G.CriarToggle("Visuals", "ESP Box", "EspBox")
+_G.CriarAba("Player")
+_G.CriarToggle("Player", "Velocidade", "SpeedCustom")
 end
-
--- ABA DE TELEPORTE POR LISTA
 _G.CriarAba("Teleport")
 local TpFrame = Instance.new("Frame")
 TpFrame.Size = UDim2.new(1, -10, 0, 160)
@@ -408,7 +382,6 @@ TpFrame.Visible = (_G.CurrentTab == "Teleport")
 TpFrame.Parent = _G.ContentFrame
 Instance.new("UICorner", TpFrame).CornerRadius = UDim.new(0, 8)
 table.insert(_G.AbasAtivas["Teleport"], TpFrame)
-
 local ListButton = Instance.new("TextButton")
 ListButton.Size = UDim2.new(1, -20, 0, 35)
 ListButton.Position = UDim2.new(0, 10, 0, 10)
@@ -418,7 +391,6 @@ ListButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ListButton.Font = Enum.Font.SourceSansBold
 ListButton.Parent = TpFrame
 Instance.new("UICorner", ListButton).CornerRadius = UDim.new(0, 6)
-
 local PlayerScroll = Instance.new("ScrollingFrame")
 PlayerScroll.Size = UDim2.new(1, -20, 0, 65)
 PlayerScroll.Position = UDim2.new(0, 10, 0, 50)
@@ -427,23 +399,21 @@ PlayerScroll.CanvasSize = UDim2.new(0, 0, 6, 0)
 PlayerScroll.Parent = TpFrame
 Instance.new("UIListLayout", PlayerScroll)
 Instance.new("UICorner", PlayerScroll).CornerRadius = UDim.new(0, 6)
-
 ListButton.MouseButton1Click:Connect(function()
-    for _, child in pairs(PlayerScroll:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
-    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-        if player ~= game:GetService("Players").LocalPlayer then
-            local pBtn = Instance.new("TextButton")
-            pBtn.Size = UDim2.new(1, 0, 0, 24)
-            pBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-            pBtn.Text = player.DisplayName
-            pBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
-            pBtn.Parent = PlayerScroll
-            Instance.new("UICorner", pBtn).CornerRadius = UDim.new(0, 4)
-            pBtn.MouseButton1Click:Connect(function() _G.JogadorSelecionadoParaTp = player ListButton.Text = "SELECIONADO: " .. player.DisplayName end)
-        end
-    end
+for _, child in pairs(PlayerScroll:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
+for _, player in pairs(Players:GetPlayers()) do
+if player ~= LocalPlayer then
+local pBtn = Instance.new("TextButton")
+pBtn.Size = UDim2.new(1, 0, 0, 24)
+pBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+pBtn.Text = player.DisplayName
+pBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
+pBtn.Parent = PlayerScroll
+Instance.new("UICorner", pBtn).CornerRadius = UDim.new(0, 4)
+pBtn.MouseButton1Click:Connect(function() _G.JogadorSelecionadoParaTp = player ListButton.Text = "SELECIONADO: " .. player.DisplayName end)
+end
+end
 end)
-
 local TpPlayerAction = Instance.new("TextButton")
 TpPlayerAction.Size = UDim2.new(1, -20, 0, 32)
 TpPlayerAction.Position = UDim2.new(0, 10, 0, 120)
@@ -453,26 +423,19 @@ TpPlayerAction.TextColor3 = Color3.fromRGB(255, 255, 255)
 TpPlayerAction.Font = Enum.Font.SourceSansBold
 TpPlayerAction.Parent = TpFrame
 Instance.new("UICorner", TpPlayerAction).CornerRadius = UDim.new(0, 6)
-
 TpPlayerAction.MouseButton1Click:Connect(function()
-
 if _G.JogadorSelecionadoParaTp and _G.JogadorSelecionadoParaTp.Character then
 local targetRoot = _G.JogadorSelecionadoParaTp.Character:FindFirstChild("HumanoidRootPart")
-local myRoot = game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+local myRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 if targetRoot and myRoot then myRoot.CFrame = targetRoot.CFrame * CFrame.new(0, 2, 0) end
 end
 end)
--- =======================================================
--- MOTORES VETORIAIS (AIMBOT, ESP & RENDERS)
--- =======================================================
-local Camera = workspace.CurrentCamera
-local RunService = game:GetService("RunService")
 local function obterInimigoMaisProximo()
 local menorDistancia = math.huge local alvoEscolhido = nil
 local centroDaTela = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-if not (game:GetService("UserInputService").TouchEnabled and not game:GetService("UserInputService").MouseEnabled) then centroDaTela = game:GetService("UserInputService"):GetMouseLocation() end
-for _, j in pairs(game:GetService("Players"):GetPlayers()) do
-if j ~= game:GetService("Players").LocalPlayer and j.Character and j.Character:FindFirstChild("HumanoidRootPart") then
+if not (UserInputService.TouchEnabled and not UserInputService.MouseEnabled) then centroDaTela = UserInputService:GetMouseLocation() end
+for _, j in pairs(Players:GetPlayers()) do
+if j ~= LocalPlayer and j.Character and j.Character:FindFirstChild("HumanoidRootPart") then
 local head = j.Character:FindFirstChild("Head") local hum = j.Character:FindFirstChildOfClass("Humanoid")
 if head and hum and hum.Health > 0 then
 local posTela, visivel = Camera:WorldToViewportPoint(head.Position)
@@ -507,9 +470,9 @@ else LinhaEsp.Visible = false CaixaEsp.Visible = false end
 else LinhaEsp.Visible = false CaixaEsp.Visible = false end
 end)
 end
-for _, j in pairs(game:GetService("Players"):GetPlayers()) do if j ~= game:GetService("Players").LocalPlayer then criarEsp(j) end end
-game:GetService("Players").PlayerAdded:Connect(function(j) if j ~= game:GetService("Players").LocalPlayer then criarEsp(j) end end)
-game:GetService("GuiService").CaptureNotified:Connect(function(capturando)
+for _, j in pairs(Players:GetPlayers()) do if j ~= LocalPlayer then criarEsp(j) end end
+Players.PlayerAdded:Connect(function(j) if j ~= LocalPlayer then criarEsp(j) end end)
+GuiService.CaptureNotified:Connect(function(capturando)
 if _G.ThurxzConfig.StreamCheckBypass and capturando then
 if _G.FovCircle then _G.FovCircle.Visible = false end
 local antigoBox = _G.ThurxzConfig.EspBox local antigoLine = _G.ThurxzConfig.EspLine
@@ -523,10 +486,10 @@ _G.CriarBotaoAcao("Configs", "🔄 CONF LOAD", function()
 if isfile("ThurxzConfig_Premium.json") then local ok, res = pcall(function() return HttpService:JSONDecode(readfile("ThurxzConfig_Premium.json")) end) if ok then for k, v in pairs(res) do _G.ThurxzConfig[k] = v end end end
 end)
 RunService.RenderStepped:Connect(function()
-local character = game:GetService("Players").LocalPlayer.Character local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+local character = LocalPlayer.Character local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 if _G.ThurxzConfig.AimbotFovCustom and _G.FovCircle then
-if game:GetService("UserInputService").TouchEnabled and not game:GetService("UserInputService").MouseEnabled then _G.FovCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-else _G.FovCircle.Position = game:GetService("UserInputService"):GetMouseLocation() end
+if UserInputService.TouchEnabled and not UserInputService.MouseEnabled then _G.FovCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+else _G.FovCircle.Position = UserInputService:GetMouseLocation() end
 _G.FovCircle.Radius = _G.ThurxzConfig.FovSize _G.FovCircle.Visible = true
 elseif _G.FovCircle then _G.FovCircle.Visible = false end
 if _G.ThurxzConfig.AimbotHead then local alvo = obterInimigoMaisProximo() if alvo then Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, alvo.Position), 1 / _G.ThurxzConfig.AimbotSmoothness) end end
@@ -538,4 +501,5 @@ end
 workspace.Gravity = _G.ThurxzConfig.GravityCustom and 40 or 196.2
 end)
 print("--> [THURXZ PURPLE PREMIUM HUB V3]: Modulos finais ativos e injetados com sucesso!")
+end)()
 
