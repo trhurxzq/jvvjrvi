@@ -1,5 +1,5 @@
 -- =======================================================
--- THURXZ PURPLE HUB V3 — SCRIPT PREMIUM COMPLETO UNIFICADO
+-- THURXZ PURPLE HUB V3 — PARTE 1 DE 2 (LOGIN & BASE GUI)
 -- =======================================================
 
 local HttpService = game:GetService("HttpService")
@@ -26,7 +26,7 @@ _G.TipoDeJogoAtual = "Universal"
 _G.ChavesValidasOnline = {}
 _G.ThurxzScriptAutorizado = false
 
--- LINK CORRIGIDO: Puxando o arquivo real onde estão salvas as suas chaves VIP
+-- LINK CORRIGIDO: Vinculado diretamente ao arquivo real keys.txt de chaves (0001 ate 0012)
 local LINK_GITHUB_RAW = "https://githubusercontent.com" 
 local LINK_DISCORD = "https://discord.gg"
 
@@ -213,168 +213,183 @@ coroutine.wrap(function()
     _G.ContentFrame.CanvasSize = UDim2.new(0, 0, 2.8, 0)
     _G.ContentFrame.ScrollBarThickness = 3
     Instance.new("UIListLayout", _G.ContentFrame).Padding = UDim.new(0, 6)
-
 local dragging, dragInput, dragStart, startPos
 local function update(input)
-local delta = input.Position - dragStart
-_G.MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    local delta = input.Position - dragStart
+    _G.MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 Title.InputBegan:Connect(function(input)
-if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-dragging = true dragStart = input.Position startPos = _G.MainFrame.Position
-input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
-end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true dragStart = input.Position startPos = _G.MainFrame.Position
+        input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+    end
 end)
 Title.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end end)
 UserInputService.InputChanged:Connect(function(input) if input == dragInput and dragging then update(input) end end)
 MenuToggleButton.MouseButton1Click:Connect(function() _G.MainFrame.Visible = not _G.MainFrame.Visible end)
+
 _G.AbasAtivas = {} _G.CurrentTab = ""
+
 function _G.MostrarNotificacao(nomeOpcao)
-local NotifBox = Instance.new("Frame")
-NotifBox.Size = UDim2.new(1, 0, 0, 38)
-NotifBox.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
-NotifBox.BackgroundTransparency = 0.1
-NotifBox.Parent = _G.NotificationContainer
-Instance.new("UICorner", NotifBox).CornerRadius = UDim.new(0, 6)
-local BordaRoxa = Instance.new("Frame")
-BordaRoxa.Size = UDim2.new(0, 4, 1, 0)
-BordaRoxa.BackgroundColor3 = Color3.fromRGB(160, 32, 240)
-BordaRoxa.Parent = NotifBox
-Instance.new("UICorner", BordaRoxa).CornerRadius = UDim.new(0, 6)
-local Texto = Instance.new("TextLabel")
-Texto.Size = UDim2.new(1, -15, 1, 0)
-Texto.Position = UDim2.new(0, 12, 0, 0)
-Texto.BackgroundTransparency = 1
-Texto.Text = nomeOpcao .. " ativa com sucesso"
-Texto.TextColor3 = Color3.fromRGB(255, 255, 255)
-Texto.Font = Enum.Font.SourceSansBold
-Texto.TextSize = 13
-Texto.TextXAlignment = Enum.TextXAlignment.Left
-Texto.Parent = NotifBox
-NotifBox.Size = UDim2.new(0, 0, 0, 38)
-NotifBox:TweenSize(UDim2.new(1, 0, 0, 38), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.22, true)
-task.delay(3, function() if NotifBox then NotifBox:Destroy() end end)
+    local NotifBox = Instance.new("Frame")
+    NotifBox.Size = UDim2.new(1, 0, 0, 38)
+    NotifBox.BackgroundColor3 = Color3.fromRGB(12, 12, 14)
+    NotifBox.BackgroundTransparency = 0.1
+    NotifBox.Parent = _G.NotificationContainer
+    Instance.new("UICorner", NotifBox).CornerRadius = UDim.new(0, 6)
+    
+    local BordaRoxa = Instance.new("Frame")
+    BordaRoxa.Size = UDim2.new(0, 4, 1, 0)
+    BordaRoxa.BackgroundColor3 = Color3.fromRGB(160, 32, 240)
+    BordaRoxa.Parent = NotifBox
+    Instance.new("UICorner", BordaRoxa).CornerRadius = UDim.new(0, 6)
+
+    local Texto = Instance.new("TextLabel")
+    Texto.Size = UDim2.new(1, -15, 1, 0)
+    Texto.Position = UDim2.new(0, 12, 0, 0)
+    Texto.BackgroundTransparency = 1
+    Texto.Text = nomeOpcao .. " ativa com sucesso"
+    Texto.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Texto.Font = Enum.Font.SourceSansBold
+    Texto.TextSize = 13
+    Texto.TextXAlignment = Enum.TextXAlignment.Left
+    Texto.Parent = NotifBox
+
+    NotifBox.Size = UDim2.new(0, 0, 0, 38)
+    NotifBox:TweenSize(UDim2.new(1, 0, 0, 38), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.22, true)
+
+    task.delay(3, function() if NotifBox then NotifBox:Destroy() end end)
 end
+
 function _G.CriarAba(nome)
-local TabButton = Instance.new("TextButton")
-TabButton.Size = UDim2.new(1, 0, 0, 32)
-TabButton.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
-TabButton.Text = nome
-TabButton.TextColor3 = Color3.fromRGB(180, 180, 180)
-TabButton.Font = Enum.Font.SourceSansBold
-TabButton.TextSize = 13
-TabButton.Parent = _G.TabsFrame
-Instance.new("UICorner", TabButton).CornerRadius = UDim.new(0, 6)
-_G.AbasAtivas[nome] = {}
-if _G.CurrentTab == "" then _G.CurrentTab = nome end
-TabButton.MouseButton1Click:Connect(function()
-_G.CurrentTab = nome
-for abaNome, componentes in pairs(_G.AbasAtivas) do
-local visivel = (abaNome == nome)
-for _, comp in pairs(componentes) do comp.Visible = visivel end
+    local TabButton = Instance.new("TextButton")
+    TabButton.Size = UDim2.new(1, 0, 0, 32)
+    TabButton.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+    TabButton.Text = nome
+    TabButton.TextColor3 = Color3.fromRGB(180, 180, 180)
+    TabButton.Font = Enum.Font.SourceSansBold
+    TabButton.TextSize = 13
+    TabButton.Parent = _G.TabsFrame
+    Instance.new("UICorner", TabButton).CornerRadius = UDim.new(0, 6)
+    
+    _G.AbasAtivas[nome] = {}
+    if _G.CurrentTab == "" then _G.CurrentTab = nome end
+    TabButton.MouseButton1Click:Connect(function()
+        _G.CurrentTab = nome
+        for abaNome, componentes in pairs(_G.AbasAtivas) do
+            local visivel = (abaNome == nome)
+            for _, comp in pairs(componentes) do comp.Visible = visivel end
+        end
+    end)
 end
-end)
-end
+
 function _G.CriarToggle(aba, texto, configChave)
-local ToggleBg = Instance.new("TextButton")
-ToggleBg.Size = UDim2.new(1, -10, 0, 35)
-ToggleBg.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
-ToggleBg.Text = "  " .. texto
-ToggleBg.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleBg.Font = Enum.Font.SourceSans
-ToggleBg.TextSize = 14
-ToggleBg.TextXAlignment = Enum.TextXAlignment.Left
-ToggleBg.Visible = (aba == _G.CurrentTab)
-ToggleBg.Parent = _G.ContentFrame
-Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(0, 6)
-local Indicador = Instance.new("Frame")
-Indicador.Size = UDim2.new(0, 35, 0, 18)
-Indicador.Position = UDim2.new(1, -95, 0.5, -9)
-Indicador.BackgroundColor3 = _G.ThurxzConfig[configChave] and Color3.fromRGB(160, 32, 240) or Color3.fromRGB(45, 45, 50)
-Indicador.Parent = ToggleBg
-Instance.new("UICorner", Indicador).CornerRadius = UDim.new(0, 9)
-local BindButton = Instance.new("TextButton")
-BindButton.Size = UDim2.new(0, 40, 0, 20)
-BindButton.Position = UDim2.new(1, -50, 0.5, -10)
-BindButton.BackgroundColor3 = Color3.fromRGB(28, 28, 35)
-BindButton.Text = "None"
-BindButton.TextColor3 = Color3.fromRGB(160, 32, 240)
-BindButton.Font = Enum.Font.SourceSansBold
-BindButton.TextSize = 11
-BindButton.Parent = ToggleBg
-Instance.new("UICorner", BindButton).CornerRadius = UDim.new(0, 4)
-local function atualizarEstado()
-ind.BackgroundColor3 = _G.ThurxzConfig[configChave] and Color3.fromRGB(160, 32, 240) or Color3.fromRGB(45, 45, 50)
-if _G.ThurxzConfig[configChave] then _G.MostrarNotificacao(texto) end
+    local ToggleBg = Instance.new("TextButton")
+    ToggleBg.Size = UDim2.new(1, -10, 0, 35)
+    ToggleBg.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+    ToggleBg.Text = "  " .. texto
+    ToggleBg.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleBg.Font = Enum.Font.SourceSans
+    ToggleBg.TextSize = 14
+    ToggleBg.TextXAlignment = Enum.TextXAlignment.Left
+    ToggleBg.Visible = (aba == _G.CurrentTab)
+    ToggleBg.Parent = _G.ContentFrame
+    Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(0, 6)
+
+    local Indicador = Instance.new("Frame")
+    Indicador.Size = UDim2.new(0, 35, 0, 18)
+    Indicador.Position = UDim2.new(1, -95, 0.5, -9)
+    Indicador.BackgroundColor3 = _G.ThurxzConfig[configChave] and Color3.fromRGB(160, 32, 240) or Color3.fromRGB(45, 45, 50)
+    Indicador.Parent = ToggleBg
+    Instance.new("UICorner", Indicador).CornerRadius = UDim.new(0, 9)
+
+    local BindButton = Instance.new("TextButton")
+    BindButton.Size = UDim2.new(0, 40, 0, 20)
+    BindButton.Position = UDim2.new(1, -50, 0.5, -10)
+    BindButton.BackgroundColor3 = Color3.fromRGB(28, 28, 35)
+    BindButton.Text = "None"
+    BindButton.TextColor3 = Color3.fromRGB(160, 32, 240)
+    BindButton.Font = Enum.Font.SourceSansBold
+    BindButton.TextSize = 11
+    BindButton.Parent = ToggleBg
+    Instance.new("UICorner", BindButton).CornerRadius = UDim.new(0, 4)
+
+    local function atualizarEstado()
+        Indicador.BackgroundColor3 = _G.ThurxzConfig[configChave] and Color3.fromRGB(160, 32, 240) or Color3.fromRGB(45, 45, 50)
+        if _G.ThurxzConfig[configChave] then _G.MostrarNotificacao(texto) end
+    end
+
+    ToggleBg.MouseButton1Click:Connect(function()
+        _G.ThurxzConfig[configChave] = not _G.ThurxzConfig[configChave]
+        atualizarEstado()
+    end)
+
+    local escutandoTeclado = false
+    BindButton.MouseButton1Click:Connect(function()
+        if escutandoTeclado then return end
+        escutandoTeclado = true BindButton.Text = "..." BindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        local conexaoBind
+        conexaoBind = UserInputService.InputBegan:Connect(function(input, processado)
+            if processado then return end
+            if input.UserInputType == Enum.UserInputType.Keyboard then
+                _G.ThurxzBinds[configChave] = input.KeyCode.Name
+                BindButton.Text = input.KeyCode.Name
+                BindButton.TextColor3 = Color3.fromRGB(160, 32, 240)
+                escutandoTeclado = false conexaoBind:Disconnect()
+            end
+        end)
+    end)
+
+    UserInputService.InputBegan:Connect(function(input, processado)
+        if processado then return end
+        if _G.ThurxzBinds[configChave] and input.KeyCode.Name == _G.ThurxzBinds[configChave] then
+            _G.ThurxzConfig[configChave] = not _G.ThurxzConfig[configChave]
+            atualizarEstado()
+        end
+    end)
+    table.insert(_G.AbasAtivas[aba], ToggleBg)
 end
-ToggleBg.MouseButton1Click:Connect(function()
-_G.ThurxzConfig[configChave] = not _G.ThurxzConfig[configChave]
-Indicador.BackgroundColor3 = _G.ThurxzConfig[configChave] and Color3.fromRGB(160, 32, 240) or Color3.fromRGB(45, 45, 50)
-if _G.ThurxzConfig[configChave] then _G.MostrarNotificacao(texto) end
-end)
-local escutandoTeclado = false
-BindButton.MouseButton1Click:Connect(function()
-if escutandoTeclado then return end
-escutandoTeclado = true BindButton.Text = "..." BindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-local conexaoBind
-conexaoBind = UserInputService.InputBegan:Connect(function(input, processado)
-if processado then return end
-if input.UserInputType == Enum.UserInputType.Keyboard then
-_G.ThurxzBinds[configChave] = input.KeyCode.Name
-BindButton.Text = input.KeyCode.Name
-BindButton.TextColor3 = Color3.fromRGB(160, 32, 240)
-escutandoTeclado = false conexaoBind:Disconnect()
-end
-end)
-end)
-UserInputService.InputBegan:Connect(function(input, processado)
-if processado then return end
-if _G.ThurxzBinds[configChave] and input.KeyCode.Name == _G.ThurxzBinds[configChave] then
-_G.ThurxzConfig[configChave] = not _G.ThurxzConfig[configChave]
-Indicador.BackgroundColor3 = _G.ThurxzConfig[configChave] and Color3.fromRGB(160, 32, 240) or Color3.fromRGB(45, 45, 50)
-if _G.ThurxzConfig[configChave] then _G.MostrarNotificacao(texto) end
-end
-end)
-table.insert(_G.AbasAtivas[aba], ToggleBg)
-end
+
 function _G.CriarBotaoAcao(aba, texto, acao)
-local Botao = Instance.new("TextButton")
-Botao.Size = UDim2.new(1, -10, 0, 35)
-Botao.BackgroundColor3 = Color3.fromRGB(120, 20, 180)
-Botao.Text = texto
-Botao.TextColor3 = Color3.fromRGB(255, 255, 255)
-Botao.Font = Enum.Font.SourceSansBold
-Botao.Visible = (aba == _G.CurrentTab)
-Botao.Parent = _G.ContentFrame
-Instance.new("UICorner", Botao).CornerRadius = UDim.new(0, 6)
-Botao.MouseButton1Click:Connect(acao)
-table.insert(_G.AbasAtivas[aba], Botao)
+    local Botao = Instance.new("TextButton")
+    Botao.Size = UDim2.new(1, -10, 0, 35)
+    Botao.BackgroundColor3 = Color3.fromRGB(120, 20, 180)
+    Botao.Text = texto
+    Botao.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Botao.Font = Enum.Font.SourceSansBold
+    Botao.Visible = (aba == _G.CurrentTab)
+    Botao.Parent = _G.ContentFrame
+    Instance.new("UICorner", Botao).CornerRadius = UDim.new(0, 6)
+    Botao.MouseButton1Click:Connect(acao)
+    table.insert(_G.AbasAtivas[aba], Botao)
 end
+
 if _G.TipoDeJogoAtual == "RPG/Tiro" then
-_G.CriarAba("RPG Combat")
-_G.CriarToggle("RPG Combat", "Aimbot Head", "AimbotHead")
-_G.CriarToggle("RPG Combat", "Aimbot FOV", "AimbotFovCustom")
-_G.CriarToggle("RPG Combat", "ESP Line", "EspLine")
-_G.CriarToggle("RPG Combat", "ESP Box", "EspBox")
-_G.CriarToggle("RPG Combat", "Velocidade", "SpeedCustom")
-_G.CriarToggle("RPG Combat", "Super Pulo", "JumpPowerCustom")
+    _G.CriarAba("RPG Combat")
+    _G.CriarToggle("RPG Combat", "Aimbot Head", "AimbotHead")
+    _G.CriarToggle("RPG Combat", "Aimbot FOV", "AimbotFovCustom")
+    _G.CriarToggle("RPG Combat", "ESP Line", "EspLine")
+    _G.CriarToggle("RPG Combat", "ESP Box", "EspBox")
+    _G.CriarToggle("RPG Combat", "Velocidade", "SpeedCustom")
+    _G.CriarToggle("RPG Combat", "Super Pulo", "JumpPowerCustom")
 elseif _G.TipoDeJogoAtual == "Sobrevivência" then
-_G.CriarAba("Survival")
-_G.CriarToggle("Survival", "Super Corrida", "SpeedCustom")
-_G.CriarToggle("Survival", "Pulo Customizado", "JumpPowerCustom")
-_G.CriarToggle("Survival", "Gravidade Baixa", "GravityCustom")
-_G.CriarToggle("Survival", "Modificar Vida", "ModificarVida")
-_G.CriarToggle("Survival", "ESP Caixas", "EspBox")
+    _G.CriarAba("Survival")
+    _G.CriarToggle("Survival", "Super Corrida", "SpeedCustom")
+    _G.CriarToggle("Survival", "Pulo Customizado", "JumpPowerCustom")
+    _G.CriarToggle("Survival", "Gravidade Baixa", "GravityCustom")
+    _G.CriarToggle("Survival", "Modificar Vida", "ModificarVida")
+    _G.CriarToggle("Survival", "ESP Caixas", "EspBox")
 else
-_G.CriarAba("Combat")
-_G.CriarToggle("Combat", "Aimbot Head", "AimbotHead")
-_G.CriarToggle("Combat", "Aimbot FOV", "AimbotFovCustom")
-_G.CriarAba("Visuals")
-_G.CriarToggle("Visuals", "ESP Line", "EspLine")
-_G.CriarToggle("Visuals", "ESP Box", "EspBox")
-_G.CriarAba("Player")
-_G.CriarToggle("Player", "Velocidade", "SpeedCustom")
+    _G.CriarAba("Combat")
+    _G.CriarToggle("Combat", "Aimbot Head", "AimbotHead")
+    _G.CriarToggle("Combat", "Aimbot FOV", "AimbotFovCustom")
+    _G.CriarAba("Visuals")
+    _G.CriarToggle("Visuals", "ESP Line", "EspLine")
+    _G.CriarToggle("Visuals", "ESP Box", "EspBox")
+    _G.CriarAba("Player")
+    _G.CriarToggle("Player", "Velocidade", "SpeedCustom")
 end
+
 _G.CriarAba("Teleport")
 local TpFrame = Instance.new("Frame")
 TpFrame.Size = UDim2.new(1, -10, 0, 160)
@@ -383,6 +398,7 @@ TpFrame.Visible = (_G.CurrentTab == "Teleport")
 TpFrame.Parent = _G.ContentFrame
 Instance.new("UICorner", TpFrame).CornerRadius = UDim.new(0, 8)
 table.insert(_G.AbasAtivas["Teleport"], TpFrame)
+
 local ListButton = Instance.new("TextButton")
 ListButton.Size = UDim2.new(1, -20, 0, 35)
 ListButton.Position = UDim2.new(0, 10, 0, 10)
@@ -392,6 +408,7 @@ ListButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ListButton.Font = Enum.Font.SourceSansBold
 ListButton.Parent = TpFrame
 Instance.new("UICorner", ListButton).CornerRadius = UDim.new(0, 6)
+
 local PlayerScroll = Instance.new("ScrollingFrame")
 PlayerScroll.Size = UDim2.new(1, -20, 0, 65)
 PlayerScroll.Position = UDim2.new(0, 10, 0, 50)
@@ -400,21 +417,23 @@ PlayerScroll.CanvasSize = UDim2.new(0, 0, 6, 0)
 PlayerScroll.Parent = TpFrame
 Instance.new("UIListLayout", PlayerScroll)
 Instance.new("UICorner", PlayerScroll).CornerRadius = UDim.new(0, 6)
+
 ListButton.MouseButton1Click:Connect(function()
-for _, child in pairs(PlayerScroll:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
-for _, player in pairs(Players:GetPlayers()) do
-if player ~= LocalPlayer then
-local pBtn = Instance.new("TextButton")
-pBtn.Size = UDim2.new(1, 0, 0, 24)
-pBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-pBtn.Text = player.DisplayName
-pBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
-pBtn.Parent = PlayerScroll
-Instance.new("UICorner", pBtn).CornerRadius = UDim.new(0, 4)
-pBtn.MouseButton1Click:Connect(function() _G.JogadorSelecionadoParaTp = player ListButton.Text = "SELECIONADO: " .. player.DisplayName end)
-end
-end
+    for _, child in pairs(PlayerScroll:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local pBtn = Instance.new("TextButton")
+            pBtn.Size = UDim2.new(1, 0, 0, 24)
+            pBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+            pBtn.Text = player.DisplayName
+            pBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
+            pBtn.Parent = PlayerScroll
+            Instance.new("UICorner", pBtn).CornerRadius = UDim.new(0, 4)
+            pBtn.MouseButton1Click:Connect(function() _G.JogadorSelecionadoParaTp = player ListButton.Text = "SELECIONADO: " .. player.DisplayName end)
+        end
+    end
 end)
+
 local TpPlayerAction = Instance.new("TextButton")
 TpPlayerAction.Size = UDim2.new(1, -20, 0, 32)
 TpPlayerAction.Position = UDim2.new(0, 10, 0, 120)
@@ -501,5 +520,6 @@ if _G.ThurxzConfig.ModificarVida then humanoid.MaxHealth = 2000 humanoid.Health 
 end
 workspace.Gravity = _G.ThurxzConfig.GravityCustom and 40 or 196.2
 end)
-print("--> [THURXZ PURPLE PREMIUM HUB V3]: Carregamento concluído!")
+print("--> [THURXZ PURPLE PREMIUM HUB V3]: Modulos finais ativos e injetados com sucesso!")
 end)()
+
